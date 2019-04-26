@@ -5,9 +5,7 @@ const {width, height}=Dimensions.get('window');
 
 class ListItems extends Component{
     delete(){
-        console.warn(this.props.index);
         this.props.array.data.splice(this.props.index,1);
-        // this.setState(this.props.array);
         AsyncStorage.setItem('data',JSON.stringify(this.props.array.data))
     }
     update(){
@@ -15,6 +13,7 @@ class ListItems extends Component{
         this.props.array.title=this.props.list.title;
         this.props.array.description=this.props.list.desc;
     }
+    
     render(){
         return(
             <View style={styles.listItems}>
@@ -24,10 +23,10 @@ class ListItems extends Component{
                 </View>
                
                 <TouchableOpacity onPress={this.update.bind(this)} style={styles.button} >
-                    <Text>Değiştir</Text>
+                    <Text style={{color:'green', fontWeight:'400'}}>Değiştir</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.delete.bind(this)} style={styles.button} >
-                    <Text>Sil</Text>
+                    <Text style={{color:'red', fontWeight:'400'}}>Sil</Text>
                 </TouchableOpacity>
                
             </View>
@@ -38,18 +37,20 @@ class ListItems extends Component{
 const styles={
     listItems:{
         width: width,
-        borderColor: 'black',
-        borderWidth: 1,
-        marginTop: 10,
+        marginTop: 5,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor:'#e6e6fa',
+        height:65,
+        borderColor: '#d3d3d3',
+        borderBottomWidth: 2,
     },
     content:{
-        marginLeft:15,
+        marginLeft:20,
         width:width*0.7,
-        borderColor: 'black',
-        borderWidth: 1,
+        borderRightWidth: 2,
+        borderRightColor: '#8a2be2'
     },
     title:{
         fontWeight: 'bold',
@@ -62,11 +63,9 @@ const styles={
     },
     button:{
         width:width*0.15,
-        backgroundColor: 'red',
-        borderColor: 'black',
-        borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        marginRight: 3,
     }
 };
 

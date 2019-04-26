@@ -6,7 +6,7 @@ class Button extends Component{
     render(){
         return(
             <TouchableOpacity onPress={this.props.onClick}  style={styles.button}>
-                <Text>Kaydet</Text>
+                <Text style={{ color: 'black'}}>Kaydet</Text>
             </TouchableOpacity>
         );
     }
@@ -16,12 +16,11 @@ const styles = {
     button: {
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'green',
+      backgroundColor: '#8a2be2',
       width: width*0.8,
       height:40,
-      marginTop: 15,
-      borderBottomLeftRadius: 20,
-      borderTopRightRadius: 20,
+      marginTop: 5,
+      marginBottom: 5
     }
     
 };

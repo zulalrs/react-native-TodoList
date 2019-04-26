@@ -11,37 +11,40 @@ class Main extends Component{
             title:'',
             description:'',
             i:-1,
-            data:[]
+            data:[],
+            isFetching:false
         }
     }
     componentDidMount() {
+       
         AsyncStorage.getItem('data')
          .then(value => this.setState({ data: JSON.parse(value) }))
+        
     }
     pushItem(){
         if(this.state.i!=-1){
             this.state.data.splice(this.state.i,1,{'title':this.state.title,'desc':this.state.description});
-            this.setState(this.state.data);
             this.setState({i:-1});
             AsyncStorage.setItem('data',JSON.stringify(this.state.data))
-            console.warn(this.state.data);
+            this.setState({title: ''})
+            this.setState({description: ''})
         }
         else{
             this.state.data.push({'title':this.state.title,'desc':this.state.description});
-            this.setState(this.state.data)
-            console.warn(this.state.data);
-             this.setState({title: ''})
+            this.setState({title: ''})
             this.setState({description: ''})
             AsyncStorage.setItem('data',JSON.stringify(this.state.data))
         }
      
     }
-    // items(){
-    //     return this.state.data.map((item,i)=>{
-    //         return <ListItems key={i} list={item} array={this.state.data} index={i}/>
-    //     })
-    // }
+    onRefresh(){
+        setTimeout(()=>{this.setState({isFetching:true})},50)
+    }
+    
+   
     render(){
+        const {data,title,description,isFetching}=this.state;
+       
         return(
             <View style={styles.main}>
                 <View style={styles.input}>
@@ -50,7 +53,7 @@ class Main extends Component{
                     placeholderTextColor="gray"
                     style={{borderColor:"black", borderWidth:1, marginBottom:5}}
                     onChangeText={(text)=>this.setState({title: text})}
-                    value={this.state.title}
+                    value={title}
                 />
                 
                 <TextInput 
@@ -60,29 +63,27 @@ class Main extends Component{
                     numberOfLines={4}
                     style={{borderColor:"black", borderWidth:1}}
                     onChangeText={(text)=>this.setState({description: text})}
-                    value={this.state.description}
+                    value={description}
                 />
             </View>
             <Button onClick={this.pushItem.bind(this)} />
             
             <FlatList
-                data={this.state.data.map((item)=>item)}
+                data={data.map((item)=>item)}
+                refreshing={isFetching}
+                onRefresh={this.onRefresh()}
                 renderItem={({ item,i }) => {
                     return (
                         <ListItems 
                             key={i} 
                             list={item} 
                             array={this.state} 
-                            index={this.state.data.indexOf(item)}
+                            index={data.indexOf(item)}
                             />
                     );
                   }}
             />
 
-            {/* <View>
-                {this.items()}
-            </View> */}
-            
             </View>
         );
     }
@@ -96,11 +97,11 @@ const styles = {
         width: width,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-        marginTop: 15,
+        backgroundColor: '#f8f8ff',
         flexDirection: 'column',
     },
     input:{
         width: width*0.9,
+        marginTop: 15,
     }
 };

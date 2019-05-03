@@ -1,17 +1,18 @@
 import React, {Component} from 'react';
 import {View,Text,Dimensions,TouchableOpacity,AsyncStorage} from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import { listdata } from './ListData';
 
 const {width, height}=Dimensions.get('window');
-
 class ListItems extends Component{
+    
     delete(){
-        this.props.array.data.splice(this.props.index,1);
-        AsyncStorage.setItem('data',JSON.stringify(this.props.array.data))
+        listdata.data.splice(this.props.index,1);
+        AsyncStorage.setItem('data',JSON.stringify(listdata.data)); 
+        Actions.main(({type:'reset'}));
     }
     update(){
-        this.props.array.i=this.props.index;
-        this.props.array.title=this.props.list.title;
-        this.props.array.description=this.props.list.desc;
+        Actions.input(({type:'push',index:this.props.index}))
     }
     
     render(){

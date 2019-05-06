@@ -1,15 +1,13 @@
 import React, {Component} from 'react';
 import {View,FlatList,AsyncStorage} from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
+import { getTodoList } from '../actions';
 import ListItems from './ListItems';
 
 class Main extends Component{
-    state={
-        data:this.props.dataHome
-    }
-    componentWillMount() {
-        AsyncStorage.getItem('data')
-         .then(value => this.setState({ data: JSON.parse(value) }))
+    
+    componentDidMount() {
+       this.props.getTodoList();
          
     }
     render(){
@@ -17,7 +15,7 @@ class Main extends Component{
             <View style={styles.main}>
             
             <FlatList
-                data={this.state.data}
+                data={this.props.data}
                 renderItem={({item,index}) => {
                     return (
                         <ListItems 
@@ -33,16 +31,15 @@ class Main extends Component{
         );
     }
 }
-
-export default Main;
-
 const styles = {
     main:{
         backgroundColor: '#f8f8ff'
-        // flex: 9,
-        // width: width,
-        // justifyContent: 'flex-start',
-        // alignItems: 'center',
-        // flexDirection: 'column',
     }
 };
+const mapStateToProps=({todoListResponse})=>{
+    return { data: todoListResponse.data }
+}
+
+
+export default connect(mapStateToProps,{getTodoList})(Main);
+

@@ -7,18 +7,18 @@
  */
 
 import React, {Component} from 'react';
-import {TouchableOpacity,Text,AsyncStorage} from 'react-native';
+import {TouchableOpacity,Text} from 'react-native';
 import{Router,Scene,Stack,Actions} from 'react-native-router-flux'
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import ReduxThunk from 'redux-thunk';
+import logger from 'redux-logger'
 import Main from './Components/Main';
 import Input from './Components/Input';
-import { listdata } from './Components/ListData'
+import reducers from './Reducers';
 
 export default class App extends Component {
 
- componentWillMount(){
-  AsyncStorage.getItem('data')
-  .then(value => (listdata.data=JSON.parse(value)))
- }
   renderRight(){
     return(
       <TouchableOpacity>
@@ -27,7 +27,9 @@ export default class App extends Component {
     )
     }
   render() {
+    const store=createStore(reducers,{},applyMiddleware(ReduxThunk,logger));
     return (
+      <Provider store={store}>
       <Router 
       navigationBarstyle={styles.navBar} titleStyle={styles.textStyle}>
         <Stack key="root">
@@ -47,6 +49,7 @@ export default class App extends Component {
           />
         </Stack>
       </Router>
+      </Provider>
     );
   }
 }
@@ -58,7 +61,7 @@ const styles = {
     alignItems: 'center',
   },
   navBar: {
-    backgroundColor: '#8a2be2',
+    backgroundColor: '#f8f8ff',
     borderBottomWidth: 2,
     borderColor: '#8a2be2',
     borderRadius: 10,

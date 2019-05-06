@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import { TextInput, Dimensions,View,AsyncStorage} from 'react-native';
 import{Actions} from 'react-native-router-flux'
-import Button from './Button';
+import { connect } from 'react-redux';
+import { addTodoList,updateTodoList } from '../actions';
 import {listdata} from './ListData';
+import Button from './Button';
 
 const { width, height } = Dimensions.get('window');
 class Input extends Component{
@@ -15,7 +17,7 @@ class Input extends Component{
     }
     
     componentWillMount(){
-        const item=listdata.data;
+        const item=this.props.data;
         const i=this.props.index;
         if(i>=0){
             this.setState({title: item[i].title})
@@ -26,19 +28,29 @@ class Input extends Component{
             this.setState({description: ''})
         }
     }
+    async componentWillReceiveProps(props){
+        
+        if(props.isCreated)
+        {
+            await AsyncStorage.setItem('data',JSON.stringify(props.data));
+            Actions.pop();
+        }
+    }
     pushItem() {
         const i=this.props.index;
         if(i>=0){
-            listdata.data.splice(i,1,{'title':this.state.title,'desc':this.state.description});
+            const param={
+                'title':this.state.title,'desc':this.state.description
+            }
+            this.props.updateTodoList(param,i);
+            Actions.pop();
         }
         else{
-            listdata.data.push({'title':this.state.title,'desc':this.state.description});
+            const param={
+                'title':this.state.title,'desc':this.state.description
+            }
+            this.props.addTodoList(param);
         }
-
-        AsyncStorage.setItem('data',JSON.stringify(listdata.data));
-
-        Actions.main({type:'push',dataHome:listdata.data})
-        
     }
     
     render(){
@@ -72,8 +84,6 @@ class Input extends Component{
     }
 }
 
-export default Input;
-
 const styles = {
     main:{
         width: width,
@@ -86,3 +96,9 @@ const styles = {
         marginTop: 15,
     }
 };
+
+const mapStateToProps=({todoListResponse})=>{
+    return { data: todoListResponse.data, isCreated:  todoListResponse.isCreated }
+}
+
+export default connect(mapStateToProps,{addTodoList,updateTodoList})(Input);

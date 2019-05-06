@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
 import {View,Text,Dimensions,TouchableOpacity,AsyncStorage} from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
+import { deleteTodoList } from '../actions';
 import { listdata } from './ListData';
 
 const {width, height}=Dimensions.get('window');
 class ListItems extends Component{
     
     delete(){
-        listdata.data.splice(this.props.index,1);
-        AsyncStorage.setItem('data',JSON.stringify(listdata.data)); 
-        Actions.main(({type:'reset'}));
+        this.props.deleteTodoList(this.props.index);
     }
     update(){
         Actions.input(({type:'push',index:this.props.index}))
@@ -69,5 +69,7 @@ const styles={
         marginRight: 3,
     }
 };
-
-export default ListItems;
+const mapStateToProps=({todoListResponse})=>{
+    return { data: todoListResponse.data,isCreated: todoListResponse.isCreated }
+}
+export default connect(mapStateToProps,{deleteTodoList})(ListItems);
